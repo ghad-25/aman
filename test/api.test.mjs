@@ -3,6 +3,9 @@ process.env.AMAN_SESSION_SECRET = 'test-secret-test-secret-test-secret';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 const { handle } = await import('../lib/api.mjs');
+const { setPushSender } = await import('../lib/push.mjs');
+const pushed = [];
+setPushSender(async (sub, payload) => { pushed.push({ endpoint: sub.endpoint, msg: JSON.parse(payload) }); if (sub.endpoint.includes('gone')) { const e = new Error('gone'); e.statusCode = 410; throw e; } });
 
 const BASE = 'https://aman.test';
 let cookie = '';
@@ -171,4 +174,48 @@ test('barcode: demo pack, GS1 DataMatrix with expiry, unknown pack, doctor links
   assert.equal(y.body.level, 'none');
   const fuzzy = await call('POST', '/api/barcodes', { code: '6281086011232', drug: 'Zithromx' });
   assert.equal(fuzzy.status, 400);
+});
+
+test('automatic alert on AVOID: once per medicine per day, can be switched off, reaches the phone', async () => {
+  cookie = '';
+  await call('POST', '/api/auth/demo');
+  await call('POST', '/api/demo/reset');
+  // doctor turns on phone notifications on two devices (one is no longer valid)
+  const key = await call('GET', '/api/push/key');
+  assert.ok(key.body.publicKey.length > 60);
+  const sub = (ep) => ({ endpoint: ep, keys: { p256dh: 'BPx', auth: 'au' } });
+  await call('POST', '/api/push/subscribe', { subscription: sub('https://push.example/phone') });
+  const two = await call('POST', '/api/push/subscribe', { subscription: sub('https://push.example/gone') });
+  assert.equal(two.body.devices, 2);
+  assert.equal((await call('POST', '/api/push/subscribe', { subscription: { endpoint: 'http://x' } })).status, 400);
+  pushed.length = 0;
+  // a caution result does not alert
+  await call('POST', '/api/card/demo-sara/check', { query: 'Brufen', role: 'staff' });
+  assert.equal((await call('GET', '/api/alerts')).body.alerts.length, 0);
+  // an avoid result alerts automatically, once
+  await call('POST', '/api/card/demo-sara/check', { query: 'Cipro', role: 'staff' });
+  await call('POST', '/api/card/demo-sara/check', { query: 'ciprofloxacin 500mg', role: 'patient' });
+  await call('POST', '/api/card/demo-sara/check', { barcode: '2000001000014' });
+  let al = (await call('GET', '/api/alerts')).body;
+  assert.equal(al.alerts.length, 1);
+  assert.equal(al.alerts[0].type, 'auto');
+  assert.match(al.alerts[0].drug, /سيبروفلوكساسين/);
+  assert.ok(pushed.some((x) => x.endpoint.endsWith('/phone') && x.msg.title.includes('تجنّب')));
+  assert.equal((await call('GET', '/api/push/key')).body.devices, 1, 'expired device removed');
+  // a different avoid medicine alerts again
+  await call('POST', '/api/card/demo-sara/check', { query: 'azithromycin' });
+  assert.equal((await call('GET', '/api/alerts')).body.alerts.length, 2);
+  // the doctor switches automatic alerts off for this patient
+  await call('PUT', '/api/patients/demo-sara', { autoNotify: false });
+  await call('POST', '/api/card/demo-sara/check', { query: 'gentamicin' });
+  assert.equal((await call('GET', '/api/alerts')).body.alerts.length, 2);
+  // contact requests still arrive and still push
+  pushed.length = 0;
+  await call('POST', '/api/card/demo-sara/contact', { drug: 'جنتاميسين', level: 'avoid', role: 'staff', place: 'الطوارئ' });
+  al = (await call('GET', '/api/alerts')).body;
+  assert.equal(al.alerts[0].type, 'request');
+  assert.equal(pushed.length, 1);
+  assert.equal((await call('POST', '/api/push/test')).body.delivered, 1);
+  await call('POST', '/api/demo/reset');
+  assert.equal((await call('GET', '/api/patients/demo-sara')).body.patient.autoNotify, true);
 });
