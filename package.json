@@ -1,0 +1,16 @@
+{
+  "name": "aman-platform",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AMAN: the warning travels with the patient. Doctor portal, emergency card, drug check.",
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "rules": "python3 scripts/build_rules.py"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  },
+  "engines": { "node": ">=18" }
+}

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>أمان | باركودات تجريبية</title>
+<style>
+:root{--teal:#0F766E;--ink:#12302D;--muted:#64748B;--line:#E2ECE9}
+*{box-sizing:border-box}body{margin:0;font-family:"IBM Plex Sans Arabic",Tahoma,system-ui,sans-serif;background:#F4F8F7;color:var(--ink)}
+main{max-width:980px;margin:auto;padding:24px 16px 40px}
+h1{font-size:24px;margin:0 0 6px}p.lead{color:var(--muted);font-size:13.5px;line-height:1.9;margin:0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;text-align:center}
+.card h2{font-size:15px;margin:0 0 4px}.card small{display:block;color:var(--muted);font-size:11.5px;margin-bottom:10px}
+.card canvas{max-width:100%;image-rendering:pixelated}
+.code{direction:ltr;font-family:ui-monospace,Consolas,monospace;font-size:12px;color:#3F5560;margin-top:6px;word-break:break-all}
+.tag{display:inline-block;font-size:10.5px;font-weight:800;border-radius:20px;padding:2px 9px;margin-top:6px}
+.red{background:#FFE4E5;color:#A7222F}.green{background:#E4F6EF;color:#0F766E}.gray{background:#EEF2F4;color:#475569}
+.note{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;font-size:12.5px;line-height:1.9;color:#3F5560}
+a{color:var(--teal);font-weight:800}
+@media print{.note,.lead a{display:none}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+<h1>باركودات تجريبية لأمان</h1>
+<p class="lead">افتح بطاقة مريض تجريبي من جوالك (مثل <a href="/medical/demo-sara/check">فحص دواء سارة</a>)، واختر «امسح الباركود»، ووجّه الكاميرا على أي رمز هنا من شاشة الكمبيوتر أو بعد طباعته.</p>
+<div class="grid" id="grid"></div>
+<div class="note"><b>عن هذه الأرقام:</b> تبدأ بالبادئة 20، وهي مخصصة في نظام GS1 للاستخدام الداخلي، فلا تطابق أي منتج حقيقي في السوق. علب الأدوية الحقيقية تحمل رقم المنتج (GTIN) في باركود خطي أو في مربع DataMatrix مع تاريخ الانتهاء والتشغيلة، ويربطها الطبيب بالدواء مرة واحدة من «باركود الأدوية» في لوحته.</div>
+</main>
+<script src="/assets/zxing.min.js"></script>
+<script>
+(function(){
+const GS='\u001d';
+const items=[
+ {t:'سيبروفلوكساسين',s:'باركود خطي EAN-13',fmt:'EAN_13',v:'2000001000014',tag:['red','تجنّب لسارة']},
+ {t:'سيبروفلوكساسين',s:'DataMatrix: رقم المنتج + انتهاء 2028 + تشغيلة',fmt:'DATA_MATRIX',v:'0102000001000014'+'17281231'+'10LOT2026'+GS+'21SN000123',tag:['red','تجنّب لسارة']},
+ {t:'سيبروفلوكساسين (منتهية)',s:'DataMatrix: انتهت في يناير 2025',fmt:'DATA_MATRIX',v:'0102000001000014'+'17250131'+'10LOT7'+GS+'21SN000999',tag:['red','منتهية الصلاحية']},
+ {t:'بروفين (إيبوبروفين)',s:'باركود خطي EAN-13',fmt:'EAN_13',v:'2000001000021',tag:['red','بحذر لسارة (تداخل)']},
+ {t:'زيثروماكس (أزيثرومايسين)',s:'باركود خطي EAN-13',fmt:'EAN_13',v:'2000001000038',tag:['red','تجنّب لسارة']},
+ {t:'بنادول (باراسيتامول)',s:'باركود خطي EAN-13',fmt:'EAN_13',v:'2000001000045',tag:['green','لا تنبيه']},
+ {t:'باكتريم (كوتريموكسازول)',s:'باركود خطي EAN-13',fmt:'EAN_13',v:'2000001000052',tag:['gray','معلومة ليوسف']},
+ {t:'بريماكوين',s:'باركود خطي EAN-13',fmt:'EAN_13',v:'2000001000069',tag:['red','تجنّب ليوسف']},
+];
+// EAN-13 drawn directly (the ZXing writer has no EAN-13 encoder)
+const L=['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
+const G=['0100111','0110011','0011011','0100001','0011101','0111001','0000101','0010001','0001001','0010111'];
+const R=L.map(x=>x.replace(/./g,c=>c==='0'?'1':'0'));
+const PAR=['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'];
+function ean13(code){const d=code.split('').map(Number);let bits='101';for(let i=1;i<=6;i++)bits+=(PAR[d[0]][i-1]==='L'?L:G)[d[i]];bits+='01010';for(let i=7;i<=12;i++)bits+=R[d[i]];return bits+'101';}
+function drawEan(canvas,code){const bits=ean13(code),m=3,q=11*m,h=90;canvas.width=bits.length*m+q*2;canvas.height=h+20;const c=canvas.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,canvas.width,canvas.height);c.fillStyle='#000';[...bits].forEach((b,i)=>{if(b==='1')c.fillRect(q+i*m,10,m,h)});}
+function draw(canvas,matrix,scale,pad){
+  const w=matrix.getWidth(),h=matrix.getHeight();
+  canvas.width=(w+pad*2)*scale;canvas.height=(h+pad*2)*scale;
+  const c=canvas.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,canvas.width,canvas.height);c.fillStyle='#000';
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(matrix.get(x,y))c.fillRect((x+pad)*scale,(y+pad)*scale,scale,scale);
+}
+const grid=document.getElementById('grid');
+items.forEach(it=>{
+  const card=document.createElement('div');card.className='card';
+  card.innerHTML=`<h2>${it.t}</h2><small>${it.s}</small>`;
+  const cv=document.createElement('canvas');
+  try{
+    if(it.fmt==='EAN_13'){drawEan(cv,it.v);cv.style.width='260px';}
+    else{const m=new ZXing.DataMatrixWriter().encode(it.v,ZXing.BarcodeFormat.DATA_MATRIX,0,0,new Map());draw(cv,m,7,3);cv.style.width='170px';}
+  }catch(e){cv.replaceWith(document.createTextNode('تعذّر رسم الرمز'));}
+  card.appendChild(cv);
+  card.insertAdjacentHTML('beforeend',`<div class="code">${it.v.replace(/\u001d/g,'<GS>').replace(/</g,'&lt;')}</div><span class="tag ${it.tag[0]}">${it.tag[1]}</span>`);
+  grid.appendChild(card);
+});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Pages (the API lives at /api/* in netlify/functions/api.mjs)
+/doctor                 /aman_doctor_login.html          200
+/doctor/dashboard       /aman_doctor_dashboard.html      200
+/claim/*                /aman_wallet_receive.html        200
+/medical/:t/check       /aman_drug_checker.html          200
+/medical/:t/code        /aman_access_code.html           200
+/medical/:t/record      /aman_full_medical_record.html   200
+/medical/:t             /aman_emergency_card.html        200
+/m/:t                   /medical/:t                      301
+/demo-barcodes          /demo_barcodes.html              200

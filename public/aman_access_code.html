@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta name="robots" content="noindex,nofollow,noarchive">
+
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#F5F9F8">
+  <meta name="robots" content="noindex,nofollow">
+  <title>أمان | رمز الوصول — منصة أمان</title>
+  <style>
+    :root{--primary:#0F766E;--accent:#14B8A6;--bg:#F5F9F8;--ink:#172B35;--muted:#64748B;--line:#E5EFED;--danger:#C52533;--danger-bg:#FFF2F2;--danger-line:#FAD7D9;--soft:#EAF7F4;--shadow:0 8px 28px rgba(16,55,60,.045)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#E7EFED;color:var(--ink);font-family:'IBM Plex Sans Arabic','Noto Kufi Arabic',Tahoma,Arial,sans-serif;font-size:14px;line-height:1.75;-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #78CBC2;outline-offset:3px}button:disabled{cursor:not-allowed}p,h1,h2{margin:0}[hidden]{display:none!important}
+    .shell{max-width:480px;width:100%;min-height:100svh;margin:0 auto;background:var(--bg);box-shadow:0 12px 40px rgba(21,52,57,.13);display:flex;flex-direction:column}
+    .topbar{background:white;border-bottom:1px solid var(--line);padding:16px 21px 14px}.toprow{display:flex;justify-content:space-between;align-items:center}.brand{display:flex;gap:10px;align-items:center}.brand-logo{width:38px;height:42px;display:grid;place-items:center;background:var(--primary);color:white;border-radius:13px}.brand-name{font-size:22px;font-weight:800;letter-spacing:-.6px;line-height:1.15;color:var(--primary)}.brand-name small{font-size:12px;letter-spacing:0;color:#648a87}.brand-sub{font-size:10.5px;color:var(--muted);margin-top:3px}.demo-pill{font-size:10px;font-weight:800;border:1px solid #D8E7E4;border-radius:30px;color:#568079;background:#F3F8F7;padding:5px 9px}
+    main{padding:20px 18px 32px;flex:1}.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--primary);text-decoration:none;font-size:12px;font-weight:800;margin-bottom:19px;min-height:32px}.back-link:hover{text-decoration:underline}.breadcrumb{font-size:11px;font-weight:700;color:var(--primary);margin-bottom:4px}.page-title{font-size:24px;font-weight:800;line-height:1.5;letter-spacing:-.45px}.page-subtitle{font-size:12px;line-height:1.95;color:#586E77;margin-top:6px;max-width:360px}
+    .patient{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:16px;background:#fff;padding:12px 15px;margin-top:20px;box-shadow:var(--shadow)}.patient-icon{width:42px;height:42px;background:#EEF8F6;color:var(--primary);display:grid;place-items:center;border-radius:13px}.patient-name{font-size:13px;font-weight:800}.patient-meta{font-size:11px;color:var(--muted);margin-top:2px}
+    .access-card{margin-top:17px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:24px 20px 22px}.hero-icon{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;background:var(--soft);color:var(--primary);margin:0 auto 13px}.card-title{font-size:18px;line-height:1.5;font-weight:800;text-align:center}.card-desc{font-size:12px;line-height:1.9;color:var(--muted);text-align:center;margin:6px auto 0;max-width:270px}.code-label{font-weight:800;font-size:12px;margin-top:24px;margin-bottom:10px;text-align:center}.code-inputs{display:flex;gap:11px;justify-content:center;direction:ltr}.code-input{appearance:none;width:57px;height:65px;border:1.5px solid #CEDFD9;border-radius:13px;background:#FCFEFD;color:var(--ink);font-size:27px;font-weight:800;line-height:1;text-align:center;direction:ltr;caret-color:var(--primary);outline:none;transition:background .15s,border-color .15s,box-shadow .15s}.code-input:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px #C7EBE4;background:#fff}.code-input.has-value{border-color:#80BFB6;background:#F3FBF9}.code-input.error{border-color:#C52533;background:#FFF6F6;animation:shake .25s}.code-input:disabled{background:#f2f5f4;border-color:#e0e9e6;color:#94aaa6}.helper-text{font-size:11px;color:#71838B;text-align:center;margin-top:11px}.verify{margin-top:23px;width:100%;border:0;background:var(--primary);border-radius:14px;min-height:54px;color:#fff;font-size:14px;font-weight:800;display:flex;gap:9px;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(15,118,110,.16)}.verify:hover:not(:disabled){background:#0D625B}.verify:disabled{background:#B8D4CE;box-shadow:none}.status{border:1px solid var(--danger-line);background:var(--danger-bg);color:#9A2632;border-radius:12px;padding:12px 13px;margin-top:15px;display:flex;align-items:flex-start;gap:9px;font-size:11px;line-height:1.85}.status svg{margin-top:2px;flex-shrink:0}.status.locked{background:#FFF8E9;border-color:#F8E4BC;color:#995C00}.status.info{background:#ECF8F6;border-color:#D2E9E4;color:var(--primary)}.attempts{color:var(--muted);font-size:11px;text-align:center;margin-top:15px}.attempts strong{color:var(--ink)}
+    .success{padding:30px 5px 11px;text-align:center}.success-icon{width:70px;height:70px;border-radius:50%;background:#E8F7F3;display:grid;place-items:center;color:var(--primary);margin:0 auto 14px}.success h2{font-size:20px;font-weight:800}.success p{font-size:12px;line-height:2;color:var(--muted);margin-top:7px}.success .verify{margin-top:24px}.secondary-btn{margin-top:10px;min-height:46px;width:100%;border:1.5px solid #C9E5E0;color:var(--primary);background:#fff;border-radius:13px;font-weight:800;font-size:12px}
+    .privacy{margin-top:19px;display:flex;gap:11px;align-items:flex-start;border-radius:15px;background:#EAF4F1;padding:14px;color:#506D69}.privacy-icon{width:30px;height:30px;flex-shrink:0;border-radius:10px;background:#D8ECE7;color:var(--primary);display:grid;place-items:center}.privacy strong{display:block;font-size:12px;color:#244C49}.privacy p{font-size:11px;line-height:1.9;margin-top:3px}.demo-guide{margin-top:13px;border:1px dashed #BFD9D3;border-radius:14px;padding:13px 15px;background:#FAFDFC;display:flex;justify-content:space-between;align-items:center;gap:12px}.demo-guide .tag{font-size:10px;color:#698A84;font-weight:800}.demo-guide .desc{font-size:10.5px;color:#697B82;margin-top:3px}.demo-code{font:800 21px/1.1 Arial,sans-serif;color:var(--primary);letter-spacing:4px;direction:ltr}.guide-btn{font-size:11px;font-weight:800;padding:6px 10px;background:#EAF7F4;border:1px solid #C4E4DD;color:var(--primary);border-radius:9px}
+    .footer{padding:6px 18px 27px;text-align:center}.footer-line{border-top:1px solid #DAE8E4;margin-bottom:12px}.footer p{font-size:10px;line-height:1.9;color:#82908F}.footer p+p{margin-top:5px;font-weight:700;color:#83A39D}
+    .overlay{position:fixed;inset:0;background:rgba(16,42,47,.43);padding:24px;display:grid;place-items:center;z-index:10}.modal{width:100%;max-width:360px;background:#fff;border-radius:20px;padding:24px;text-align:center;box-shadow:0 20px 60px #092f2b33}.modal-icon{width:50px;height:50px;margin:0 auto 12px;border-radius:14px;color:var(--primary);background:var(--soft);display:grid;place-items:center}.modal h2{font-size:17px;font-weight:800}.modal p{font-size:12px;color:var(--muted);margin-top:9px;line-height:1.9}.modal button{background:var(--primary);border:0;color:#fff;border-radius:12px;padding:11px 20px;width:100%;margin-top:17px;font-weight:800}
+    svg{display:block;flex-shrink:0}@keyframes shake{0%,100%{transform:translateX(0)}30%{transform:translateX(-4px)}65%{transform:translateX(4px)}}@media(min-width:520px){body{padding:28px 14px}.shell{border-radius:24px;overflow:hidden;min-height:calc(100svh - 56px)}}@media(max-width:350px){.code-inputs{gap:8px}.code-input{width:49px;height:60px}.access-card{padding-inline:15px}.topbar{padding-inline:15px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+  </style>
+<style>
+
+
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.5 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-3.5Z" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10" width="15" height="11" rx="2.8" stroke="currentColor" fill="none" stroke-width="1.8"/><path d="M8 10V7a4 4 0 1 1 8 0v3M12 14v3" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="currentColor" fill="none" stroke-width="1.8"/><path d="M4.5 21c.1-4.5 3-6.5 7.5-6.5s7.4 2 7.5 6.5" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="m12 3 9.3 16.1a1.3 1.3 0 0 1-1.1 1.9H3.8a1.3 1.3 0 0 1-1.1-1.9L12 3Z" stroke="currentColor" fill="none" stroke-width="1.8"/><path d="M12 9v5.1M12 17.6h.01" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12 5 5 11-11" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" fill="none" stroke-width="1.8"/><path d="M12 11v5M12 7.6h.01" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="13" r="4" stroke="currentColor" fill="none" stroke-width="1.8"/><path d="M12 13h9m-3 0v3m-3-3v3" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round"/></symbol>
+</svg>
+<div class="shell">
+ <header class="topbar"><div class="toprow"><div class="brand"><span class="brand-logo"><svg width="24" height="24"><use href="#i-shield"/></svg></span><div><div class="brand-name">أمان <small>AMAN</small></div><div class="brand-sub">ملف طبي للطوارئ</div></div></div><span class="demo-pill">وصول محمي</span></div></header>
+ <main>
+  <a data-aman-file="aman_emergency_card.html" href="aman_emergency_card.html" class="back-link"><svg width="17" height="17"><use href="#i-back"/></svg>العودة إلى بطاقة الطوارئ</a>
+  <div class="breadcrumb">الخطوة ١ من ٢ · الوصول للملف الطبي</div>
+  <h1 class="page-title">الملف الطبي الكامل</h1>
+  <p class="page-subtitle">المعلومات الطبية التفصيلية متاحة بعد إدخال رمز الوصول.</p>
+  <section class="patient" aria-label="بيانات المريض"><span class="patient-icon"><svg width="22" height="22"><use href="#i-user"/></svg></span><div><div class="patient-name" id="p-name">…</div><div class="patient-meta" id="p-meta"></div></div></section>
+  <section class="access-card" aria-label="التحقق من الرمز">
+   <div id="code-step">
+    <div class="hero-icon"><svg width="29" height="29"><use href="#i-lock"/></svg></div>
+    <h2 class="card-title">أدخل رمز الوصول</h2>
+    <p class="card-desc">الرمز مكوّن من 4 أرقام. يعرفه المريض أو مرافقه، ومكتوب على ظهر بطاقة أمان.</p>
+    <form id="access-form" autocomplete="off" novalidate>
+      <div class="code-label" id="code-label">رمز الوصول المكوّن من أربع خانات</div>
+      <div class="code-inputs" role="group" aria-labelledby="code-label">
+       <input id="code-0" class="code-input" inputmode="numeric" pattern="[0-9]*" type="text" maxlength="1" autocomplete="one-time-code" aria-label="الرقم الأول" dir="ltr">
+       <input id="code-1" class="code-input" inputmode="numeric" pattern="[0-9]*" type="text" maxlength="1" aria-label="الرقم الثاني" dir="ltr">
+       <input id="code-2" class="code-input" inputmode="numeric" pattern="[0-9]*" type="text" maxlength="1" aria-label="الرقم الثالث" dir="ltr">
+       <input id="code-3" class="code-input" inputmode="numeric" pattern="[0-9]*" type="text" maxlength="1" aria-label="الرقم الرابع" dir="ltr">
+      </div>
+      <p class="helper-text">اكتب الأرقام كما تظهر على البطاقة</p>
+      <button id="verify" class="verify" type="submit" disabled><svg width="18" height="18"><use href="#i-key"/></svg>تأكيد رمز الوصول</button>
+    </form>
+    <div id="status" class="status" role="status" aria-live="polite" hidden><svg width="17" height="17"><use href="#i-alert"/></svg><span id="status-copy"></span></div>
+    <p id="attempts" class="attempts">يمكن المحاولة حتى <strong>5 مرات</strong> قبل الإيقاف المؤقت.</p>
+   </div>
+   <div class="success" id="success-step" hidden>
+    <div class="success-icon"><svg width="35" height="35"><use href="#i-check"/></svg></div>
+    <h2>تم التحقق من الرمز</h2>
+    <p>الرمز صحيح. يبقى الملف مفتوحًا على هذا الجهاز 30 دقيقة، وسُجّل الفتح في سجل المريض.</p>
+    <button class="verify" id="open-record" type="button">متابعة إلى الملف الطبي <svg width="17" height="17"><use href="#i-back"/></svg></button>
+    <button class="secondary-btn" id="back-success" type="button">العودة إلى بطاقة الطوارئ</button>
+   </div>
+  </section>
+  <section class="privacy" aria-label="توضيح الخصوصية"><span class="privacy-icon"><svg width="17" height="17"><use href="#i-lock"/></svg></span><div><strong>خصوصية المعلومات الطبية</strong><p>هذه الخطوة مخصّصة للوصول إلى المعلومات التفصيلية. بيانات الطوارئ الأساسية تبقى متاحة في البطاقة السابقة.</p></div></section>
+  <section class="demo-guide" id="demo-guide" aria-label="رمز التجربة" hidden><div><div class="tag">مريض تجريبي</div><div class="desc">رمز الوصول لهذا المريض التجريبي</div><div style="display:flex;gap:9px;align-items:center;margin-top:7px"><span class="demo-code" id="demo-code"></span><button class="guide-btn" id="fill-demo" type="button">استخدام الرمز</button></div></div><svg width="24" height="24" style="color:#8AB8AF"><use href="#i-info"/></svg></section>
+ </main>
+ <footer class="footer"><div class="footer-line"></div><p>كل محاولة فتح تُسجَّل في سجل المريض.</p><p>أمان · AMAN | المس · افحص · احمِ</p></footer>
+</div>
+
+
+
+<script src="/assets/aman.js"></script>
+<script>
+(function(){
+'use strict';
+const {api,esc,token}=AMAN;
+const DEMO={'demo-sara':'6305','demo-sara-wallet':'6305','demo-yousef':'2580','demo-yousef-wallet':'2580'};
+const inputs=[...document.querySelectorAll('.code-input')],form=document.querySelector('#access-form'),verify=document.querySelector('#verify'),status=document.querySelector('#status'),statusCopy=document.querySelector('#status-copy'),attempts=document.querySelector('#attempts');
+let lockUntil=0,clock=null,busy=false;
+const KEY='aman_rec_'+token;
+function digits(v){return String(v||'').replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-1632)).replace(/[۰-۹]/g,c=>String(c.charCodeAt(0)-1776)).replace(/[^0-9]/g,'');}
+const content=()=>inputs.map(i=>i.value).join('');
+const blocked=()=>lockUntil>Date.now();
+function sync(){inputs.forEach(i=>i.classList.toggle('has-value',!!i.value));verify.disabled=content().length!==4||blocked()||busy;}
+function clearCode(){inputs.forEach(i=>{i.value='';});sync();}
+function fillCode(v){const arr=digits(v).slice(0,4).split('');inputs.forEach((i,n)=>{i.value=arr[n]||'';i.classList.remove('error')});sync();if(!blocked()&&arr.length<4)inputs[arr.length]?.focus();else inputs[3]?.blur()}
+function msg(copy,type){status.hidden=false;status.className='status '+(type||'');statusCopy.textContent=copy;}
+function hide(){status.hidden=true;}
+function updateLock(){if(!blocked()){if(lockUntil){lockUntil=0;clearInterval(clock);clock=null;clearCode();hide();attempts.textContent='يمكن المحاولة حتى 5 مرات قبل الإيقاف المؤقت.'}inputs.forEach(i=>i.disabled=false);sync();return}
+ const r=Math.ceil((lockUntil-Date.now())/1000);inputs.forEach(i=>i.disabled=true);verify.disabled=true;msg('تم إيقاف المحاولات 15 دقيقة للحماية. الوقت المتبقي: '+String(Math.floor(r/60)).padStart(2,'0')+':'+String(r%60).padStart(2,'0'),'locked');attempts.textContent='تم الوصول إلى الحد الأقصى للمحاولات.'}
+inputs.forEach((input,index)=>{
+ input.addEventListener('input',()=>{if(blocked())return;const v=digits(input.value);if(v.length>1){fillCode(v);return}input.value=v.slice(0,1);hide();inputs.forEach(i=>i.classList.remove('error'));sync();if(input.value&&index<3)inputs[index+1].focus()});
+ input.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!input.value&&index>0){e.preventDefault();inputs[index-1].value='';inputs[index-1].focus();sync()}});
+ input.addEventListener('paste',e=>{const v=digits(e.clipboardData?.getData('text'));if(v.length>1){e.preventDefault();fillCode(v)}});
+});
+form.addEventListener('submit',async e=>{e.preventDefault();if(blocked()||content().length!==4||busy)return;busy=true;sync();
+ try{
+  const r=await api(`/api/card/${encodeURIComponent(token)}/unlock`,{method:'POST',body:{pin:content()}});
+  sessionStorage.setItem(KEY,r.recordToken);hide();
+  document.querySelector('#code-step').hidden=true;document.querySelector('#success-step').hidden=false;document.querySelector('#open-record').focus();
+ }catch(err){
+  inputs.forEach(i=>i.classList.add('error'));clearCode();
+  if(err.status===429&&err.data&&err.data.until){lockUntil=err.data.until;updateLock();if(!clock)clock=setInterval(updateLock,1000);}
+  else if(err.status===403){const n=err.data.remaining;msg('الرمز غير صحيح. باقي لك '+n+' محاولات.','');attempts.textContent='تبقّت '+n+' محاولات قبل الإيقاف المؤقت.';inputs[0].focus();}
+  else msg(err.message,'');
+ }finally{busy=false;sync();}
+});
+document.querySelector('#fill-demo').addEventListener('click',()=>{if(!blocked()){fillCode(DEMO[token]);hide()}});
+document.querySelector('#back-success').addEventListener('click',()=>amanGo('aman_emergency_card.html'));
+document.querySelector('#open-record').addEventListener('click',()=>amanGo('aman_full_medical_record.html'));
+if(DEMO[token]){document.querySelector('#demo-guide').hidden=false;document.querySelector('#demo-code').textContent=DEMO[token];}
+api(`/api/card/${encodeURIComponent(token)}?log=0`).then(d=>{document.querySelector('#p-name').textContent=d.card.name;document.querySelector('#p-meta').textContent=`${d.card.age} سنة · ${d.card.conditions.map(c=>c.ar).join('، ')}`;}).catch(e=>{document.querySelector('main').innerHTML=`<div style="margin-top:30px;text-align:center"><h2>تعذّر فتح الصفحة</h2><p>${esc(e.message)}</p></div>`;});
+sync();
+})();
+
+</script>
+</body>
+</html>
