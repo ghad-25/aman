@@ -30,6 +30,8 @@
 .rule-row.removed{background:#FFFBF2;border-color:#F6E6C5}
 .rule-row.removed b{text-decoration:line-through;text-decoration-color:#C99A3E}
 .badge.blue{background:#EAF2FC;color:#1F4F86}
+.lowrisk{display:block;margin-top:5px;font-size:10.5px;line-height:1.7;color:#1F4F86;background:#EAF2FC;border-radius:8px;padding:5px 8px}
+.allergy-chip{display:inline-block;font-size:10px;font-weight:800;color:#A7222F;background:#FFE4E5;border-radius:20px;padding:1px 8px;margin-inline-start:4px}
 .toggle-link{border:1px solid #CFE3DE;background:#fff;color:#0F766E;border-radius:9px;font:inherit;font-size:11px;font-weight:800;padding:6px 10px;cursor:pointer;white-space:nowrap}
 .toggle-link.warn{color:#B32E3C;border-color:#F2CDCF;background:#FFF7F7}
 .qr-box{width:150px;max-width:42%;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;flex-shrink:0}
@@ -131,7 +133,7 @@ function fail(e){toast(e.message||'حدث خطأ')}
 const field=(id,label,val,kind='input',wide=false,extra='')=>`<div class="field ${wide?'wide':''}"><label for="${id}">${label}</label>${kind==='textarea'?`<textarea id="${id}" ${extra}>${esc(val)}</textarea>`:`<input id="${id}" value="${esc(val)}" type="${kind==='number'?'number':'text'}" ${kind==='number'?'min="0" max="120"':''} ${extra}>`}</div>`;
 const condChips=(name,sel)=>`<div class="chips">${[['MG','الوهن العضلي الوبيل'],['G6PD','نقص إنزيم G6PD']].map(([c,l])=>`<label class="chip ${sel.includes(c)?'on':''}"><input type="checkbox" name="${name}" value="${c}" ${sel.includes(c)?'checked':''}>${l}</label>`).join('')}</div>`;
 const needPatient=()=>`<div class="panel"><div class="empty">${icon('users')}لا يوجد مريض محدد. أضف مريضًا أو اختر من القائمة.</div><div class="form-actions"><button class="btn" data-action="add-patient">${icon('plus')} إضافة مريض</button><button class="btn ghost" data-view="patients">قائمة المرضى</button></div></div>`;
-function profile(){const x=detail.patient;return `<div class="patient-profile"><div class="avatar">${initial(x.name)}</div><div style="flex:1"><h2>${esc(x.name)}</h2><p>${esc(x.age)} سنة${x.sex?' · '+esc(x.sex):''} · ${esc(condText(x))}</p><p>آخر تأكيد: ${esc(date(x.lastConfirmedAt))}${x.stale?' · <b style="color:#9C6019">يحتاج تأكيد</b>':''}</p></div></div>`}
+function profile(){const x=detail.patient;return `<div class="patient-profile"><div class="avatar">${initial(x.name)}</div><div style="flex:1"><h2>${esc(x.name)}</h2><p>${esc(x.age)} سنة${x.sex?' · '+esc(x.sex):''} · ${esc(condText(x))}</p>${(x.allergies||[]).length?`<p>الحساسية: ${x.allergies.map(a=>`<span class="allergy-chip">${esc(a.label)}</span>`).join('')}</p>`:''}<p>آخر تأكيد: ${esc(date(x.lastConfirmedAt))}${x.stale?' · <b style="color:#9C6019">يحتاج تأكيد</b>':''}</p></div></div>`}
 
 // ---------------- phone notifications (Web Push)
 const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
@@ -223,6 +225,18 @@ function recordPage(){
   <div class="form-actions" style="margin-bottom:12px"><button class="btn light" data-view="rules">${icon('list')} قائمة التجنّب</button><button class="btn light" data-view="access">${icon('wallet')} وسائل الوصول</button></div>
   <button class="btn danger full" data-action="delete-patient">${icon('trash')} حذف ملف المريض</button>`;
 }
+function allergyPanel(){
+  const x=detail.patient,lib=detail.allergyLibrary||{groups:[],reactions:[],certainty:[],version:''};
+  const opt=(arr,sel)=>arr.map(o=>`<option value="${esc(o.id)}"${o.id===sel?' selected':''}>${esc(o.ar)}</option>`).join('');
+  const rows=(x.allergies||[]).map((a,i)=>`<div class="rule-row"><div class="meta"><b>${esc(a.label)}</b><small>${esc(a.reactionAr)}${a.year?' · '+esc(a.year):''} · ${esc(a.certaintyAr)}${a.note?' · '+esc(a.note):''}</small>${a.reaction==='intolerance'?'<span class="lowrisk">عرض جانبي وليس حساسية: يمكنك مراجعة التسمية وإزالتها.</span>':a.lowRisk?'<span class="lowrisk">منخفضة الخطورة حسب السجل (تفاعل خفيف قبل أكثر من 5 سنوات، غير مؤكد بفحص). قد يستفيد المريض من تقييم الحساسية، وكثير من هذه الحالات ليست حساسية حقيقية.</span>':''}</div><button class="icon-button" data-remove-allergy="${i}" aria-label="حذف">${icon('trash')}</button></div>`).join('')||'<p class="minor">لا توجد حساسية مسجلة.</p>';
+  return `<div class="panel"><div class="section-header"><h2>الحساسية</h2><span class="badge gray" dir="ltr">${esc(lib.version)}</span></div>${rows}
+   <form id="allergy-form" class="stack" style="margin-top:10px">
+    <div class="contact-row" style="grid-template-columns:1fr 1fr"><div class="field"><label for="al-group">نوع الحساسية</label><select id="al-group"><option value="">— اختر، أو اكتب الدواء —</option>${opt(lib.groups.filter(g=>g.kind==='drug'))}<optgroup label="غير دوائية">${opt(lib.groups.filter(g=>g.kind!=='drug'))}</optgroup></select></div>${field('al-name','الدواء المسبب إن عُرف (مثل Augmentin)','')}</div>
+    <div class="contact-row" style="grid-template-columns:1.5fr .6fr 1fr"><div class="field"><label for="al-reaction">التفاعل</label><select id="al-reaction">${opt(lib.reactions,'unknown')}</select></div>${field('al-year','السنة','','input',false,'inputmode="numeric" maxlength="4" placeholder="2015"')}<div class="field"><label for="al-cert">مصدر المعلومة</label><select id="al-cert">${opt(lib.certainty,'reported')}</select></div></div>
+    ${field('al-note','ملاحظة (تظهر للمعالج)','')}
+    <button class="btn small" type="submit">${icon('plus')} أضف الحساسية</button></form>
+   <p class="top-note">تُفحص الحساسية مع كل دواء: الدواء نفسه، وعائلته، والأدوية التي يحدث معها تحسس متصالب. إذا عرفت الدواء المسبب يصير التحذير أدق.</p></div>`;
+}
 function rulesPage(){
   if(!detail)return bar('قائمة التجنّب','','list')+needPatient();
   const x=detail.patient,removed=new Set(x.removedRules);
@@ -233,8 +247,9 @@ function rulesPage(){
   }).join('');
   return `${bar('قائمة التجنّب','تأتي تلقائيًا من مكتبة أمان حسب الحالة، وتعدّلها لهذا المريض.','list')}${profile()}
   <div class="panel"><div class="section-header"><h2>جرّب الفحص لهذا المريض</h2></div><form id="test-form" class="test-box"><input id="test-q" placeholder="مثال: Cipro أو بروفين" autocomplete="off"><button class="btn small" style="flex:0" type="submit">${icon('search')} افحص</button></form><div id="test-out"></div></div>
+  ${allergyPanel()}
   <div class="panel"><div class="section-header"><h2>أدوية أضفتها لهذا المريض</h2><span class="badge red">تجنّب</span></div>
-   ${x.customAvoid.map((c,i)=>`<div class="rule-row"><div class="meta"><b>${esc(c.name)}</b><small>${esc(c.note||'—')}</small></div><button class="icon-button" data-remove-custom="${i}" aria-label="حذف">${icon('trash')}</button></div>`).join('')||'<p class="minor">لا يوجد. أضف أي دواء خاص بهذا المريض (حساسية سابقة مثلًا).</p>'}
+   ${x.customAvoid.map((c,i)=>`<div class="rule-row"><div class="meta"><b>${esc(c.name)}</b><small>${esc(c.note||'—')}</small></div><button class="icon-button" data-remove-custom="${i}" aria-label="حذف">${icon('trash')}</button></div>`).join('')||'<p class="minor">لا يوجد. أضف أي دواء خاص بهذا المريض. الحساسية سجّلها في قسم «الحساسية» حتى تُفحص عائلتها كاملة.</p>'}
    <form id="custom-form" class="stack" style="margin-top:10px"><div class="contact-row" style="grid-template-columns:1fr 1.4fr">${field('custom-name','اسم الدواء','')}${field('custom-note','السبب (يظهر للمعالج)','')}</div><button class="btn small" type="submit">${icon('plus')} أضف إلى قائمة التجنّب</button></form></div>
   ${groups}`;
 }
@@ -255,7 +270,7 @@ function alertsPage(){
   return `${bar('التنبيهات','تنبيه تلقائي عند كل نتيجة «تجنّب» (مرة لكل دواء في اليوم)، وطلبات «اتصل بالطبيب المعالج». ردّك على الطلب يظهر للمعالج فورًا.','bell')}${pushPanel()}
   ${alerts.length?alerts.map(a=>alertCard(a,false)).join(''):`<div class="panel"><div class="empty">${icon('bell')}لا توجد طلبات بعد. عند نتيجة «تجنّب» في فحص الدواء يظهر للمعالج زر «اتصل بالطبيب المعالج»، ويصلك الطلب هنا.</div></div>`}`;
 }
-const EV={card_open:'فُتحت بطاقة الطوارئ',drug_check:'فحص دواء',record_open:'فُتح الملف الكامل بالرمز',record_fail:'رمز خاطئ للملف الكامل',record_locked:'إيقاف المحاولات 15 دقيقة',contact_request:'طلب تواصل مع الطبيب',doctor_reply:'رد الطبيب على طلب تواصل',doctor_edit:'تعديل الملف الطبي',doctor_create:'إنشاء الملف',doctor_confirm:'تأكيد تحديث المعلومات',doctor_rules:'تعديل قائمة التجنّب',access_on:'تفعيل وسيلة وصول',access_off:'إيقاف وسيلة وصول',access_reissue:'إصدار رابط جديد',pin_reset:'إصدار رمز وصول جديد',wallet_claim_view:'فتح رابط استلام البطاقة'};
+const EV={card_open:'فُتحت بطاقة الطوارئ',drug_check:'فحص دواء',record_open:'فُتح الملف الكامل بالرمز',record_fail:'رمز خاطئ للملف الكامل',record_locked:'إيقاف المحاولات 15 دقيقة',contact_request:'طلب تواصل مع الطبيب',doctor_reply:'رد الطبيب على طلب تواصل',doctor_edit:'تعديل الملف الطبي',doctor_create:'إنشاء الملف',doctor_confirm:'تأكيد تحديث المعلومات',doctor_rules:'تعديل قائمة التجنّب',doctor_allergies:'تعديل الحساسية',access_on:'تفعيل وسيلة وصول',access_off:'إيقاف وسيلة وصول',access_reissue:'إصدار رابط جديد',pin_reset:'إصدار رمز وصول جديد',wallet_claim_view:'فتح رابط استلام البطاقة'};
 function logsPage(){
   return `${bar('سجل الوصول','كل فتح للبطاقة أو الملف، وكل فحص دواء، يُسجَّل هنا بدور الشخص لا باسمه.','log')}
   <div class="panel"><div class="section-header"><h2>أحدث الأحداث</h2><button class="btn small ghost" style="flex:0" data-action="refresh-logs">${icon('refresh')} تحديث</button></div>
@@ -320,6 +335,7 @@ document.addEventListener('click',async e=>{
   const rm=t.closest('[data-remove-med]');if(rm){const meds=detail.patient.meds.map(m=>({name:m.name,dose:m.dose,when:m.when}));meds.splice(Number(rm.dataset.removeMed),1);saveMeds(meds);return}
   const rr=t.closest('[data-remove-rule]');if(rr){try{await refreshDetail(await api(`/api/patients/${selected}/rules`,{method:'POST',body:{remove:rr.dataset.removeRule}}));toast('أُزيل لهذا المريض، ويبقى ظاهرًا كـ«بحذر»')}catch(er){fail(er)}return}
   const rs=t.closest('[data-restore]');if(rs){try{await refreshDetail(await api(`/api/patients/${selected}/rules`,{method:'POST',body:{restore:rs.dataset.restore}}));toast('رجع إلى القائمة')}catch(er){fail(er)}return}
+  const ra=t.closest('[data-remove-allergy]');if(ra){try{await refreshDetail(await api(`/api/patients/${selected}/allergies`,{method:'POST',body:{remove:Number(ra.dataset.removeAllergy)}}));toast('حُذفت الحساسية')}catch(er){fail(er)}return}
   const rc=t.closest('[data-remove-custom]');if(rc){try{await refreshDetail(await api(`/api/patients/${selected}/rules`,{method:'POST',body:{removeCustom:Number(rc.dataset.removeCustom)}}))}catch(er){fail(er)}return}
   const cp=t.closest('[data-copy]');if(cp){toast(await copy(cp.dataset.copy)?'تم نسخ الرابط':'انسخ الرابط يدويًا');return}
   const tg=t.closest('[data-toggle]');if(tg){try{await refreshDetail(await api(`/api/patients/${selected}/access`,{method:'POST',body:{kind:tg.dataset.toggle,action:'toggle'}}));toast('تم تحديث الحالة. يسري فورًا.')}catch(er){fail(er)}return}
@@ -357,10 +373,11 @@ document.addEventListener('submit',async e=>{
     await refreshDetail(d);toast('حُفظ. بطاقة الطوارئ تعرض التعديل الآن.');
   }
   if(f.id==='barcode-form'){const raw=lastRawBc&&lastRawBc.replace(/\u001d/g,'')===g('bc-code')?lastRawBc:g('bc-code');if(!raw)return;const r=await api('/api/barcodes',{method:'POST',body:{code:raw,drug:g('bc-drug'),label:g('bc-label')}});toast(`رُبط ${r.barcode.label} بـ ${r.barcode.drug.ar}`);lastRawBc='';await loadBarcodes();render();}
+  if(f.id==='allergy-form'){const body={add:{group:g('al-group'),name:g('al-name'),reaction:g('al-reaction'),year:g('al-year'),certainty:g('al-cert'),note:g('al-note')}};if(!body.add.group&&!body.add.name){toast('اختر نوع الحساسية أو اكتب الدواء المسبب');return}await refreshDetail(await api(`/api/patients/${selected}/allergies`,{method:'POST',body}));toast('أُضيفت الحساسية، وتظهر على بطاقة الطوارئ الآن')}
   if(f.id==='custom-form'){const name=g('custom-name');if(!name)return;await refreshDetail(await api(`/api/patients/${selected}/rules`,{method:'POST',body:{addCustom:{name,note:g('custom-note')}}}));toast('أُضيف إلى قائمة التجنّب')}
   if(f.id==='test-form'){
     const q=g('test-q');if(!q)return;const r=await api(`/api/patients/${selected}/check`,{method:'POST',body:{query:q}});const out=document.getElementById('test-out');
-    if(r.status==='result'){const lv=LV[r.level];out.innerHTML=`<div class="test-result ${r.level}"><b>${esc(r.drug.map(d=>d.ar).join(' + '))}: ${lv[0]}</b>${r.findings.map(x=>`<div>• ${esc(x.reason)}${x.removed?' (أزلته أنت)':''}</div>`).join('')}${r.level==='none'?'<div>لا يوجد تنبيه في قائمة حالات المريض.</div>':''}${r.verifyIngredients?'<div>في الاسم كلمات غير معروفة: تحقق من المكونات.</div>':''}</div>`}
+    if(r.status==='result'){const lv=LV[r.level];out.innerHTML=`<div class="test-result ${r.level}"><b>${esc(r.drug.map(d=>d.ar).join(' + '))}: ${lv[0]}</b>${r.findings.map(x=>`<div>• ${esc(x.reason)}${x.removed?' (أزلته أنت)':''}</div>`).join('')}${r.level==='none'?`<div>لا يوجد تنبيه في قائمة ${esc((r.noWarningFor||[]).join('، ')||'حالات المريض')}.</div>`:''}${(r.notReviewedFor||[]).length?`<div>غير موجود في قائمة ${esc(r.notReviewedFor.join('، '))}: يظهر للمعالج «راجع الصيدلي».</div>`:''}${r.verifyIngredients?'<div>في الاسم كلمات غير معروفة: تحقق من المكونات.</div>':''}</div>`}
     else if(r.status==='confirm')out.innerHTML=`<div class="test-result none">هل تقصد: ${r.suggestions.map(s=>esc(s.ar)).join('، ')}؟ (لا نفحص اسمًا غير مؤكد)</div>`;
     else if(r.status==='need_route')out.innerHTML=`<div class="test-result none">يختلف التحذير حسب طريقة الإعطاء: ${r.options.map(o=>esc(o.ar)).join('، ')}. أضف الطريقة للاسم (مثل: بالوريد).</div>`;
     else out.innerHTML='<div class="test-result none">غير موجود في قائمة أمان. يظهر للمعالج «راجع الصيدلي».</div>';

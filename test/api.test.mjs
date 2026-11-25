@@ -171,7 +171,8 @@ test('barcode: demo pack, GS1 DataMatrix with expiry, unknown pack, doctor links
   const again = await call('POST', '/api/card/demo-sara/check', { barcode: '6281086011232' });
   assert.equal(again.body.level, 'avoid');
   const y = await call('POST', '/api/card/demo-yousef/check', { barcode: '6281086011232' });
-  assert.equal(y.body.level, 'none');
+  assert.equal(y.body.status, 'unknown', 'azithromycin was never reviewed for G6PD: "check with the pharmacist", not "no warning"');
+  assert.equal(y.body.notInList, true);
   const fuzzy = await call('POST', '/api/barcodes', { code: '6281086011232', drug: 'Zithromx' });
   assert.equal(fuzzy.status, 400);
 });

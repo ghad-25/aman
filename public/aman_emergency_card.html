@@ -25,6 +25,17 @@
 @keyframes sk{to{background-position:-200% 0}}
 a.contact-button{text-decoration:none}
 .nondrug .risk-name{color:#8C1D2A}
+.allergy-box{margin-top:14px;background:#fff;border:1px solid #F5DFE0;border-right:4px solid var(--red);border-radius:15px;padding:13px 14px;box-shadow:var(--shadow)}
+.allergy-box+.allergy-box{margin-top:10px}
+.allergy-box.soft{border-right-color:#94A3B8;border-color:var(--line)}
+.al-head{display:flex;align-items:center;gap:8px;color:#A8222F;font-size:12px;font-weight:800}
+.allergy-box.soft .al-head{color:#475569}
+.al-title{font-size:15px;font-weight:800;color:#8C1D2A;margin-top:5px;line-height:1.6}
+.allergy-box.soft .al-title{color:var(--heading)}
+.al-meta{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.8}
+.al-line{font-size:11.5px;line-height:1.9;margin-top:6px;border-radius:9px;padding:6px 9px}
+.al-line b{font-weight:800}
+.al-line.red{background:var(--red-tint);color:#8C1D2A}.al-line.amber{background:var(--amber-tint);color:#7A4A00}.al-line.blue{background:#EEF5FF;color:#1E4E8C}
 
 </style>
 </head>
@@ -76,6 +87,8 @@ function render(c){
   const count=a=>a.reduce((n,g)=>n+g.items.length,0);
   const avoidBody=L.custom.map(x=>`<div class="risk-item"><div class="risk-name">${esc(x.name)} <span class="risk-tag" style="background:#FFE4E5;color:#A7222F">أضافه الطبيب المعالج</span></div><p class="risk-description"><b>السبب:</b> ${esc(x.note||'قرار الطبيب المعالج لهذا المريض.')}<br><b>الإجراء:</b> لا يُعطى إلا بعد التواصل مع الطبيب المعالج.</p></div>`).join('')+L.avoid.map(risk).join('');
   const nonDrug=L.nonDrug.length?`<section class="section nondrug" aria-label="تجنّب أيضًا"><h2 class="section-title">${svg('i-alert')}<span>تجنّب أيضًا (غير الأدوية)</span></h2><div class="meds">${L.nonDrug.map(n=>`<div class="med-row" style="align-items:flex-start"><span class="med-icon" style="background:#FFE4E5;color:#C52533">${svg('i-alert',17)}</span><span class="med-name">${esc(n.ar)}<small style="display:block;font-weight:500;color:#8C2F36;font-size:11px;line-height:1.7">${esc(n.advice)}</small></span></div>`).join('')}</div></section>`:'';
+  const AL=L.allergies||[];
+  const allergyHtml=AL.map(a=>`<section class="allergy-box ${a.notAllergy?'soft':''}" aria-label="${esc(a.label)}"><div class="al-head">${svg('i-alert',17)}<span>${a.notAllergy?'عرض جانبي مسجّل (ليس حساسية)':'حساسية مسجّلة'}</span></div><h2 class="al-title">${esc(a.label)}</h2><p class="al-meta">${esc(a.reaction)}${a.year?' · '+esc(a.year):''} · ${esc(a.certainty)}${a.note?'<br>'+esc(a.note):''}</p>${a.avoid.length?`<p class="al-line red"><b>لا تُعطى: </b>${a.avoid.map(esc).join('، ')}</p>`:''}${a.caution.length?`<p class="al-line amber"><b>بحذر: </b>${a.caution.map(esc).join('، ')}</p>`:''}${a.info.length?`<p class="al-line blue"><b>تُعطى عادة مع المراقبة: </b>${a.info.map(esc).join('، ')}</p>`:''}</section>`).join('');
   const meds=c.meds.length?c.meds.map(m=>`<div class="med-row"><span class="med-icon">${svg('i-pill',17)}</span><span class="med-name">${esc(m.name)}</span></div>`).join(''):'<div class="med-row"><span class="med-name" style="color:#64748B;font-weight:500">لا توجد أدوية حالية مسجلة.</span></div>';
   const tel=p=>String(p||'').replace(/[^\d+]/g,'');
   const contacts=[...c.contacts.map(x=>({icon:'i-user',title:`${x.name}${x.relation?' — '+x.relation:''}`,sub:x.phone,phone:x.phone})),
@@ -83,6 +96,7 @@ function render(c){
   app.innerHTML=`
   <section class="identity" aria-label="بيانات المريض"><div class="person-line"><div><div class="person-label">الملف الطبي ${c.sex==='أنثى'?'للمريضة':'للمريض'}</div><h1 class="patient-name">${esc(c.name)}</h1><div class="patient-sub"><span>${esc(c.age)} ${c.age<=10&&c.age>2?'سنوات':'سنة'}</span>${c.sex?`<span class="dot"></span><span>${esc(c.sex)}</span>`:''}</div></div><div class="identity-mark">${svg('i-user',24)}</div></div></section>
   ${c.conditions.map(x=>`<section class="alert" aria-label="تنبيه طبي مهم"><div class="alert-head">${svg('i-alert',18)}<span>تنبيه طبي مهم</span></div><h2 class="alert-title">${esc(x.ar)}</h2><p class="alert-copy">${esc(x.headline)}</p></section>`).join('')}
+  ${allergyHtml}
   ${c.stale?`<div class="stale"><b>تنبيه:</b> مرّ أكثر من 6 أشهر على آخر تأكيد من الطبيب. تأكد من المعلومات مع الصيدلي أو الطبيب.</div>`:''}
   <button type="button" class="check-button" id="go-check">${svg('i-scan',28)}<span><strong>افحص دواء</strong><small>اكتب اسم الدواء أو صوّر العلبة</small></span></button>
   <section class="section" aria-label="تحذيرات الأدوية"><h2 class="section-title"><svg width="19" height="19" class="section-icon"><use href="#i-list"/></svg>تحذيرات الأدوية</h2>
@@ -95,7 +109,7 @@ function render(c){
   <section class="section" aria-label="جهات التواصل"><h2 class="section-title"><svg width="19" height="19" class="section-icon"><use href="#i-call"/></svg>التواصل في الطوارئ</h2><div class="contact-card">${contacts.map(x=>`<div class="contact-line"><span class="contact-icon">${svg(x.icon)}</span><span class="contact-info"><b>${esc(x.title)}</b><small><bdi>${esc(x.sub)}</bdi></small></span>${tel(x.phone)?`<a class="contact-button" href="tel:${esc(tel(x.phone))}">${svg('i-call',15)}اتصال</a>`:''}</div>`).join('')}</div></section>
   <button class="full-record" type="button" id="go-record">${svg('i-lock')}افتح الملف الطبي الكامل</button>
   <p class="privacy-line">آخر تأكيد من الطبيب: ${esc(date(c.lastConfirmedAt))}</p>
-  <p class="demo-note">قوائم الأدوية: ${c.conditions.map(x=>esc(x.version)).join('، ')} · المصدر لكل قاعدة يظهر في فحص الدواء.<br>هذه المعلومات تساعد الطبيب ولا تغني عن قراره.</p>`;
+  <p class="demo-note">قوائم الأدوية: ${c.conditions.map(x=>esc(x.version)).join('، ')}${AL.length?'، الحساسية '+esc(L.allergyVersion||''):''} · المصدر لكل قاعدة يظهر في فحص الدواء.<br>هذه المعلومات تساعد الطبيب ولا تغني عن قراره.</p>`;
   document.getElementById('go-check').addEventListener('click',()=>amanGo('aman_drug_checker.html'));
   document.getElementById('go-record').addEventListener('click',()=>amanGo('aman_access_code.html'));
   app.querySelectorAll('.accordion-btn').forEach(b=>b.addEventListener('click',()=>{const a=b.closest('.accordion');const o=a.dataset.open==='true';a.dataset.open=String(!o);b.setAttribute('aria-expanded',String(!o));}));

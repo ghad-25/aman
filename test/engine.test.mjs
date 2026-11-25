@@ -61,7 +61,7 @@ test('route matters: eye drops vs tablets', () => {
 test('interactions with the patient\'s own medicines', () => {
   assert.equal(level(sara, 'Allopurinol').level, 'avoid');
   assert.equal(level(sara, 'Brufen').level, 'caution');
-  assert.equal(level(yousef, 'Allopurinol').level, 'none');
+  assert.equal(level(yousef, 'Allopurinol').status, 'unknown', 'not reviewed for G6PD -> not in list, never "no warning"');
 });
 
 test('stable steroid the patient already takes is information, not a stop', () => {
@@ -95,5 +95,41 @@ test('doctor-added medicine matches even with dose words', () => {
   const p = { conditions: ['MG'], meds: [], customAvoid: [{ name: 'Augmentin', note: 'حساسية' }] };
   assert.equal(level(p, 'Augmentin 1g').level, 'avoid');
   assert.equal(level(p, 'augmentin').level, 'avoid');
-  assert.equal(level(p, 'Augmentinx').status, 'unknown');
+  // Augmentin is now a known brand: a close spelling asks first, it is never checked silently.
+  const close = level(p, 'Augmentinx');
+  assert.equal(close.status, 'confirm');
+  assert.equal(close.suggestions[0].key, 'amoxicillin-clavulanate');
+});
+
+test('no false reassurance: a known medicine never reviewed for the condition is "not in list", never "no warning"', () => {
+  for (const [p, c] of [[sara, 'MG'], [yousef, 'G6PD']]) {
+    const reviewed = new Set([...DATA.rules.filter((r) => r.condition === c).flatMap((r) => r.keys),
+      ...DATA.noWarning.filter((r) => r.condition === c).map((r) => r.key)]);
+    for (const k of Object.keys(DATA.meds)) {
+      if (reviewed.has(k)) continue;
+      const r = checkForPatient(p, { key: k });
+      assert.notEqual(r.status === 'result' && r.level === 'none', true, `${c}: ${k} gave "no warning" without being reviewed`);
+    }
+  }
+  const r = checkForPatient(yousef, { query: 'amiodarone' });
+  assert.equal(r.status, 'unknown');
+  assert.equal(r.notInList, true);
+  // a reviewed no-warning medicine still says "no warning"
+  const nw = DATA.noWarning.find((x) => x.condition === 'MG');
+  const ok = checkForPatient(sara, { key: nw.key, route: null });
+  assert.ok(ok.status === 'need_route' || (ok.status === 'result' && ok.level === 'none' && ok.noWarningFor.length));
+});
+
+test('stale record (> 6 months since the doctor confirmed it): "no warning" becomes "check with the pharmacist"; warnings still show', () => {
+  const nw = DATA.noWarning.find((x) => x.condition === 'MG' && (x.routes || []).includes('*')) || DATA.noWarning.find((x) => x.condition === 'MG');
+  const old = { conditions: ['MG'], meds: [], lastConfirmedAt: '2026-01-01T00:00:00Z' };
+  const fresh = { ...old, lastConfirmedAt: new Date().toISOString() };
+  const route = (nw.routes || [])[0] && nw.routes[0] !== '*' ? ({ oral: 'oral', iv: 'injection', ophthalmic: 'ophthalmic', topical: 'topical', inhaled: 'inhaled' })[nw.routes[0]] || null : null;
+  const a = checkForPatient(fresh, { key: nw.key, route });
+  const b = checkForPatient(old, { key: nw.key, route });
+  if (a.status === 'result' && a.level === 'none') { assert.equal(b.status, 'unknown'); assert.equal(b.stale, true); }
+  assert.equal(checkForPatient(fresh, { query: 'paracetamol' }).level, 'none');
+  const st = checkForPatient(old, { query: 'paracetamol' });
+  assert.equal(st.status, 'unknown'); assert.equal(st.stale, true);
+  assert.equal(checkForPatient(old, { query: 'ciprofloxacin', route: 'oral' }).level, 'avoid');
 });

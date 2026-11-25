@@ -87,7 +87,7 @@ ${first?`<section class="emergency-teaser" aria-label="خطة الطوارئ"><d
 ${section('medicines','pill','الأدوية الحالية',`${r.meds.length} أدوية · الجرعات والأوقات`,meds,true)}
 ${section('episodes','activity','النوبات السابقة',`${lines(r.history.episodes).length} مسجلة`,ep,false)}
 ${section('treatments','hospital','العلاجات السابقة','علاجات سابقة بالمستشفى',list(r.history.treatments),false)}
-${section('health','heart','الأمراض والعمليات والحساسية','التاريخ الطبي والحساسيات',list(r.history.conditions),false)}
+${section('health','heart','الأمراض والعمليات والحساسية',(r.allergies&&r.allergies.length?`${r.allergies.length} حساسية مسجلة · `:'')+'التاريخ الطبي والحساسيات',((r.allergies||[]).length?`<ul class="simple-list">${r.allergies.map(a=>`<li><b>${esc(a.label)}</b><div class="muted">${esc(a.reaction)}${a.year?' · '+esc(a.year):''} · ${esc(a.certainty)}${a.note?' · '+esc(a.note):''}</div></li>`).join('')}</ul>`:'')+list(r.history.conditions),false)}
 ${section('tests','tube','التحاليل والفحوصات',`${lines(r.history.tests).length} مسجلة`,list(r.history.tests),false)}
 ${section('emergency','alert','خطة الطوارئ',`${lines(r.plan).length} تعليمات من الطبيب المعالج`,plan?`<ol class="emergency-steps">${plan}</ol>`:empty,false,'emergency-section')}
 <div class="quick-actions"><a class="action primary" href="${amanRoute('aman_drug_checker.html')}">${svg('search',18)}افحص دواء</a><a class="action secondary" href="${amanRoute('aman_emergency_card.html')}">${svg('arrow',18)}بطاقة الطوارئ</a></div>

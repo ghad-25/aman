@@ -172,7 +172,7 @@ async function check(raw,opts={}){
   }finally{$('#check-drug').disabled=!$('#drug-query').value.trim()}
 }
 function finding(f){
-  const kind={condition:'تعارض مع المرض',interaction:'تداخل مع دواء حالي',doctor:'قرار الطبيب المعالج'}[f.type]||'';
+  const kind={condition:'تعارض مع المرض',interaction:'تداخل مع دواء حالي',doctor:'قرار الطبيب المعالج',allergy:'حساسية مسجلة'}[f.type]||'';
   const lv=LEVEL[f.level]||LEVEL.none;
   const ar=v=>v&&/[\u0600-\u06FF]/.test(v)?v:'';
   const p=(label,v)=>v?`<p><b>${label}: </b>${esc(v)}</p>`:'';
@@ -204,8 +204,8 @@ function show(res){
     findings.innerHTML=`<div class="choice-list">${res.options.map(o=>`<button class="choice" data-route="${esc(o.id)}">${esc(o.ar)}</button>`).join('')}</div>`;
     findings.querySelectorAll('[data-route]').forEach(b=>b.addEventListener('click',()=>check(res.query,{key:lastOpts.key,route:b.dataset.route})));
   }else if(res.status==='unknown'){
-    card$.className='result-card unknown';$('#result-status').textContent='الدواء غير موجود في قائمتنا';$('#result-name').textContent=res.query;$('#result-latin').textContent='';
-    $('#result-summary').textContent='هذا الاسم غير موجود في قائمة أمان لهذا المريض. لا يعني ذلك أنه آمن. راجع الصيدلي قبل إعطائه.';
+    card$.className='result-card unknown';$('#result-status').textContent=res.stale?'الملف يحتاج تأكيدًا من الطبيب':res.notInList?'غير موجود في قائمة حالة المريض':'الدواء غير موجود في قائمتنا';$('#result-name').textContent=(res.drug&&res.drug.length&&res.drug[0].ar)?drugName(res.drug):res.query;$('#result-latin').textContent='';
+    $('#result-summary').textContent=res.stale?'مرّ أكثر من 6 أشهر على آخر تأكيد من الطبيب المعالج لهذا الملف. راجع الصيدلي قبل إعطائه.':'هذا الاسم غير موجود في قائمة أمان لهذا المريض. راجع الصيدلي قبل إعطائه.';
   }else if(res.status==='error'){
     card$.className='result-card unknown';$('#result-status').textContent='تعذّر الفحص';$('#result-name').textContent='';$('#result-latin').textContent='';$('#result-summary').textContent=res.message;
   }else{
@@ -214,7 +214,8 @@ function show(res){
     card$.className='result-card '+cls;$('#result-status').textContent=label;
     $('#result-name').textContent=drugName(res.drug);$('#result-latin').textContent=drugLatin(res.drug)+(res.route?` · ${res.route.ar}`:'');
     const conds=(res.conditions||[]).map(c=>c.ar).join('، ');
-    const summary={avoid:'يوجد تحذير يمنع إعطاء هذا الدواء لهذا المريض بدون قرار من الطبيب.',caution:'يوجد تحذير مسجّل. يحتاج مراجعة أو مراقبة.',info:'ملاحظة للطاقم الصحي، لا توقف العلاج.',none:`لا يوجد تنبيه لهذا الدواء في قائمة ${conds} المعتمدة.`}[res.level];
+    let summary={avoid:'يوجد تحذير يمنع إعطاء هذا الدواء لهذا المريض بدون قرار من الطبيب.',caution:'يوجد تحذير مسجّل. يحتاج مراجعة أو مراقبة.',info:'ملاحظة للطاقم الصحي، لا توقف العلاج.',none:`لا يوجد تنبيه لهذا الدواء في قائمة ${(res.noWarningFor&&res.noWarningFor.length?res.noWarningFor.join('، '):conds)} المعتمدة.`}[res.level];
+    if(res.nonDrugOnly)summary='ليس دواءً، لكنه خطر على هذا المريض بسبب حالته: يُتجنّب تمامًا.';
     $('#result-summary').textContent=summary;
     if(res.viewer==='patient'){
       findings.innerHTML=(res.reasons||[]).map(r=>`<div class="finding ${res.level}"><p><b>السبب: </b>${esc(r)}</p></div>`).join('');
@@ -223,6 +224,7 @@ function show(res){
     }else{
       findings.innerHTML=(res.findings||[]).map(finding).join('');
     }
+    if(res.notReviewedFor&&res.notReviewedFor.length)extra.innerHTML+=`<div class="note-box warn">هذا الدواء غير موجود في قائمة ${esc(res.notReviewedFor.join('، '))} المعتمدة. راجع الصيدلي قبل إعطائه.</div>`;
     if(res.alreadyTaking&&res.alreadyTaking.length)extra.innerHTML+=`<div class="note-box">المريض يستخدم هذا الدواء حاليًا (${esc(res.alreadyTaking.join('، '))}).</div>`;
     if(res.verifyIngredients)extra.innerHTML+=`<div class="note-box warn">في الاسم كلمات لم نتعرف عليها (<span dir="auto">${esc((res.unknownWords||[]).join(' '))}</span>). قد يحتوي الدواء على مكونات أخرى: تحقق من المكونات على العلبة أو اسأل الصيدلي.</div>`;
     if(res.level==='none')extra.innerHTML+=`<div class="note-box">هذا ليس فحصًا شاملًا لكل التداخلات بين الأدوية.</div>`;
