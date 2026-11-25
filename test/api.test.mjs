@@ -31,11 +31,15 @@ test('dashboard needs login', async () => {
   assert.equal(r.status, 401);
 });
 
-test('demo login seeds Sara and Yousef with fixed links', async () => {
+test('demo login seeds Sara, Yousef and Faisal with fixed links', async () => {
   const r = await call('POST', '/api/auth/demo');
   assert.equal(r.status, 200);
   const list = await call('GET', '/api/patients');
-  assert.deepEqual(list.body.patients.map((p) => p.name).sort(), ['سارة أحمد', 'يوسف خالد'].sort());
+  assert.deepEqual(list.body.patients.map((p) => p.id).sort(), ['demo-faisal', 'demo-sara', 'demo-yousef']);
+  // Faisal's real bracelet is written with this link: it must open his card.
+  const faisal = await call('GET', '/api/card/5RPNwhpEcP');
+  assert.equal(faisal.status, 200);
+  assert.equal(faisal.body.card?.name ?? faisal.body.name, 'فيصل الغامدي');
   const card = await call('GET', '/api/card/demo-sara');
   assert.equal(card.status, 200);
   assert.equal(card.body.card.name, 'سارة أحمد');
@@ -219,4 +223,38 @@ test('automatic alert on AVOID: once per medicine per day, can be switched off, 
   assert.equal((await call('POST', '/api/push/test')).body.delivered, 1);
   await call('POST', '/api/demo/reset');
   assert.equal((await call('GET', '/api/patients/demo-sara')).body.patient.autoNotify, true);
+});
+
+test('demo reset never deletes patients the user added; missing demo patients come back without a reset', async () => {
+  cookie = '';
+  await call('POST', '/api/auth/demo');
+  const made = await call('POST', '/api/patients', { name: 'مريض أضافه المستخدم', conditions: ['G6PD'] });
+  assert.equal(made.status, 201);
+  const id = made.body.patient.id;
+  const band = made.body.patient.access.band.token;
+  await call('PUT', '/api/patients/demo-sara', { autoNotify: false });
+  await call('POST', '/api/demo/reset');
+  const ids = (await call('GET', '/api/patients')).body.patients.map((p) => p.id);
+  assert.ok(ids.includes(id), 'user patient survives the reset');
+  assert.equal((await call('GET', `/api/card/${band}`)).status, 200, 'its bracelet still opens');
+  assert.equal((await call('GET', '/api/patients/demo-sara')).body.patient.autoNotify, true, 'demo patient was reset');
+  assert.equal((await call('GET', '/api/card/5RPNwhpEcP')).status, 200);
+  // a demo patient that is missing (e.g. newly added to demo.mjs) is created on the next demo login
+  await call('DELETE', '/api/patients/demo-faisal');
+  assert.equal((await call('GET', '/api/card/5RPNwhpEcP')).status, 404);
+  await call('POST', '/api/auth/demo');
+  assert.equal((await call('GET', '/api/card/5RPNwhpEcP')).status, 200);
+  assert.ok((await call('GET', '/api/patients')).body.patients.some((p) => p.id === id), 'still there');
+  await call('DELETE', `/api/patients/${id}`);
+});
+
+test('Faisal demo: the three committee checks (condition, allergy, interaction)', async () => {
+  const lvl = async (q) => (await call('POST', '/api/card/5RPNwhpEcP/check', { query: q, role: 'staff' })).body;
+  let r = await lvl('Azithromycin');
+  assert.equal(r.level, 'avoid'); assert.ok(r.findings.some((f) => f.type === 'condition'));
+  r = await lvl('أوقمنتين');
+  assert.equal(r.level, 'avoid'); assert.ok(r.findings.some((f) => f.type === 'allergy'));
+  r = await lvl('Zyloric');
+  assert.equal(r.level, 'avoid'); assert.ok(r.findings.some((f) => f.type === 'interaction'));
+  await call('POST', '/api/demo/reset');
 });
