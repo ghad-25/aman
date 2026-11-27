@@ -1,6 +1,6 @@
 {
   "name": "aman-platform",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "private": true,
   "type": "module",
   "description": "AMAN: the warning travels with the patient. Doctor portal, emergency card, drug check.",
