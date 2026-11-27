@@ -203,6 +203,7 @@ function recordPage(){
   if(!detail)return bar('الملف الطبي','','file')+needPatient();
   const x=detail.patient,c=[...x.contacts,{},{}].slice(0,2);
   return `${bar('الملف الطبي','ما تكتبه هنا يظهر فورًا في بطاقة الطوارئ وفي الملف الكامل.','file')}${profile()}
+  ${allergyPanel()}
   <div class="panel"><form id="record-form">
    <div class="section-header"><h2>البيانات الأساسية</h2><span class="badge">يُحفظ على الخادم</span></div>
    <div class="form-grid">${field('edit-name','اسم المريض',x.name)}${field('edit-age','العمر',x.age,'number')}
@@ -218,13 +219,15 @@ function recordPage(){
    <div class="mini-rule"></div><div class="section-header"><h2>الأدوية الحالية</h2><button class="btn small ghost" style="flex:0" type="button" data-action="add-med">${icon('plus')} إضافة دواء</button></div>${medicines()}
    <p class="top-note">الأدوية الحالية تدخل في فحص التداخلات. اكتب الاسم العلمي أو التجاري.</p>
    <div class="mini-rule"></div><h2 style="font-size:15px;margin-bottom:12px">التاريخ الطبي وخطة الطوارئ <span class="badge gray">في الملف الكامل فقط</span></h2>
-   <p class="top-note" style="margin-top:-6px">اكتب كل معلومة في سطر. إذا بدأ السطر بتاريخ ثم نقطتين (مارس 2026: …) يظهر التاريخ مميزًا.</p>
-   <div class="form-grid">${field('edit-episodes','النوبات السابقة ودخول العناية',x.history.episodes,'textarea',true)}${field('edit-treatments','العلاجات السابقة',x.history.treatments,'textarea',true)}${field('edit-conditions','الأمراض والعمليات والحساسية',x.history.conditions,'textarea',true)}${field('edit-tests','التحاليل',x.history.tests,'textarea',true)}${field('edit-plan','خطة الطوارئ (كل خطوة في سطر)',x.plan,'textarea',true)}</div>
+   <p class="top-note" style="margin-top:-6px"><b>الحساسية لا تُكتب هنا:</b> النص لا يدخل في الفحص، سجّلها في قسم «الحساسية» أعلى الصفحة. اكتب كل معلومة في سطر. إذا بدأ السطر بتاريخ ثم نقطتين (مارس 2026: …) يظهر التاريخ مميزًا.</p>
+   <div class="form-grid">${field('edit-episodes','النوبات السابقة ودخول العناية',x.history.episodes,'textarea',true)}${field('edit-treatments','العلاجات السابقة',x.history.treatments,'textarea',true)}${field('edit-conditions','الأمراض والعمليات السابقة',x.history.conditions,'textarea',true)}${field('edit-tests','التحاليل',x.history.tests,'textarea',true)}${field('edit-plan','خطة الطوارئ (كل خطوة في سطر)',x.plan,'textarea',true)}</div>
    <div class="form-actions"><button class="btn" type="submit">${icon('check')} حفظ التعديلات</button><button class="btn ghost" type="button" data-action="verify">${icon('shield')} أؤكد أن المعلومات محدّثة</button></div>
   </form></div>
   <div class="form-actions" style="margin-bottom:12px"><button class="btn light" data-view="rules">${icon('list')} قائمة التجنّب</button><button class="btn light" data-view="access">${icon('wallet')} وسائل الوصول</button></div>
   <button class="btn danger full" data-action="delete-patient">${icon('trash')} حذف ملف المريض</button>`;
 }
+// A history line that names an allergy not in the structured list (text is never checked).
+function unlistedAllergy(x){const core=l=>String(l||'').replace(/حساسية|\(.*?\)/g,'').trim().split(/\s+/)[0].replace(/^ال/,'');const known=(x.allergies||[]).map(a=>core(a.label)).filter(Boolean);return Object.values(x.history||{}).join('\n').split('\n').some(line=>/حساسي|allerg/i.test(line)&&!known.some(k=>line.includes(k)))}
 function allergyPanel(){
   const x=detail.patient,lib=detail.allergyLibrary||{groups:[],reactions:[],certainty:[],version:''};
   const opt=(arr,sel)=>arr.map(o=>`<option value="${esc(o.id)}"${o.id===sel?' selected':''}>${esc(o.ar)}</option>`).join('');
@@ -370,7 +373,7 @@ document.addEventListener('submit',async e=>{
     const contacts=[0,1].map(i=>({name:g('c-name-'+i),relation:g('c-rel-'+i),phone:g('c-phone-'+i)}));
     const conditions=[...f.querySelectorAll('input[name=edit-cond]:checked')].map(i=>i.value);
     const d=await api(`/api/patients/${selected}`,{method:'PUT',body:{name:g('edit-name'),age:g('edit-age'),sex:g('edit-sex'),diagnosisYear:g('edit-year'),diagnosisNote:g('edit-diagnosis'),conditions,contacts,doctorName:g('edit-doctor'),doctorSpecialty:g('edit-spec'),doctorPhone:g('edit-doctor-phone'),history:{episodes:g('edit-episodes'),treatments:g('edit-treatments'),conditions:g('edit-conditions'),tests:g('edit-tests')},plan:g('edit-plan')}});
-    await refreshDetail(d);toast('حُفظ. بطاقة الطوارئ تعرض التعديل الآن.');
+    await refreshDetail(d);if(unlistedAllergy(d.patient))toast('حُفظ. تنبيه: كتبت «حساسية» في النص، والنص لا يُفحص. سجّلها في قسم «الحساسية» أعلى الصفحة.');else toast('حُفظ. بطاقة الطوارئ تعرض التعديل الآن.');
   }
   if(f.id==='barcode-form'){const raw=lastRawBc&&lastRawBc.replace(/\u001d/g,'')===g('bc-code')?lastRawBc:g('bc-code');if(!raw)return;const r=await api('/api/barcodes',{method:'POST',body:{code:raw,drug:g('bc-drug'),label:g('bc-label')}});toast(`رُبط ${r.barcode.label} بـ ${r.barcode.drug.ar}`);lastRawBc='';await loadBarcodes();render();}
   if(f.id==='allergy-form'){const body={add:{group:g('al-group'),name:g('al-name'),reaction:g('al-reaction'),year:g('al-year'),certainty:g('al-cert'),note:g('al-note')}};if(!body.add.group&&!body.add.name){toast('اختر نوع الحساسية أو اكتب الدواء المسبب');return}await refreshDetail(await api(`/api/patients/${selected}/allergies`,{method:'POST',body}));toast('أُضيفت الحساسية، وتظهر على بطاقة الطوارئ الآن')}
