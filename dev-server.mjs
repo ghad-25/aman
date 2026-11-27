@@ -7,7 +7,7 @@ import { handle } from './lib/api.mjs';
 
 const PORT = Number(process.env.PORT || 8888);
 const ROOT = path.resolve('public');
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.txt': 'text/plain', '.json': 'application/json', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.txt': 'text/plain', '.json': 'application/json', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json', '.woff2': 'font/woff2' };
 
 const rules = (await fs.readFile(path.join(ROOT, '_redirects'), 'utf8')).split('\n')
   .map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))

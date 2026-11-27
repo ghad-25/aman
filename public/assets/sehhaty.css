@@ -1,0 +1,67 @@
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/tajawal-arabic-400-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/tajawal-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:500;font-display:swap;src:url(/assets/fonts/tajawal-arabic-500-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:500;font-display:swap;src:url(/assets/fonts/tajawal-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:700;font-display:swap;src:url(/assets/fonts/tajawal-arabic-700-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:700;font-display:swap;src:url(/assets/fonts/tajawal-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:800;font-display:swap;src:url(/assets/fonts/tajawal-arabic-800-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:800;font-display:swap;src:url(/assets/fonts/tajawal-latin-800-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:900;font-display:swap;src:url(/assets/fonts/tajawal-arabic-900-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:'Tajawal';font-style:normal;font-weight:900;font-display:swap;src:url(/assets/fonts/tajawal-latin-900-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+/* ===== AMAN · Sehhaty design language =====
+   Shared layer loaded after each page's own styles.
+   Palette, type and components follow the Sehhaty app: lavender-gray canvas,
+   white bordered cards, navy ink, Sehhaty blue actions, iOS-style nav bar and tab bar. */
+:root{
+  --s-blue:#0A7BC2;--s-blue-dark:#07619C;--s-cyan:#17A2D3;--s-steel:#4878B8;
+  --s-bg:#F4F5FA;--s-card:#FFFFFF;--s-line:#E4E8F1;--s-ink:#1D1F3E;--s-body:#3E4560;--s-muted:#8A93AA;
+  --s-tile:#EAF0F8;--s-mint:#4FB58F;
+  --shadow:0 1px 2px rgba(29,31,62,.035);
+  --bg:#F4F5FA;--surface:#fff;
+}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Tajawal','IBM Plex Sans Arabic',Tahoma,Arial,sans-serif !important;background:var(--s-bg) !important;color:var(--s-ink)}
+button,input,select,textarea{font-family:inherit}
+.shell{box-shadow:none !important;background:var(--s-bg) !important}
+@media(min-width:520px){.shell{box-shadow:0 0 0 1px var(--s-line),0 18px 50px rgba(29,31,62,.08) !important}}
+
+/* ---------- Nav bar (Sehhaty style: back chevron on the right, centered title) ---------- */
+.s-nav{position:sticky;top:0;z-index:30;background:rgba(247,248,252,.94);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--s-line);padding:0 !important;margin:0 !important}
+.s-nav-row{width:100%;box-sizing:border-box;height:56px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 14px;max-width:100%}
+.s-back{justify-self:start;width:36px;height:36px;display:grid;place-items:center;color:var(--s-ink);text-decoration:none;border-radius:10px;margin-inline-start:-8px;background:none;border:0;cursor:pointer}
+.s-back:hover{background:#ECEFF6}
+.s-back[hidden]{display:grid;visibility:hidden}
+.s-title{font-size:16px;font-weight:800;color:var(--s-ink);white-space:nowrap;letter-spacing:0}
+.s-end{justify-self:end;display:flex;align-items:center;gap:6px}
+.s-end .demo-pill,.s-end .tag,.s-end .s-chip{font-size:12px;font-weight:700;color:var(--s-blue);background:none !important;border:0 !important;padding:4px 2px !important;box-shadow:none !important}
+.s-svc{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--s-blue);text-decoration:none}
+
+/* ---------- Large page title row (like «السجل الصحي») ---------- */
+.s-large{font-size:24px;font-weight:800;color:var(--s-ink);margin:18px 0 4px}
+
+/* ---------- Bottom tab bar ---------- */
+.s-tabs{position:sticky;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);background:#fff;border-top:1px solid var(--s-line);padding:7px 4px calc(8px + env(safe-area-inset-bottom));margin-top:24px}
+.s-tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:500;color:#8B93A7;text-decoration:none;padding:2px 0;background:none;border:0;font-family:inherit;cursor:default}
+a.s-tab{cursor:pointer}
+.s-tab svg{width:23px;height:23px}
+.s-tab.on{color:var(--s-blue);font-weight:700}
+body.has-s-tabs .footer{padding-bottom:6px}
+
+/* ---------- Sehhaty list rows & icon tiles ---------- */
+.s-list{display:grid;gap:10px}
+.s-row{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid var(--s-line);border-radius:12px;padding:14px 14px;text-decoration:none;color:inherit}
+.s-row:hover{border-color:#CFD8E8}
+.s-tile{width:44px;height:44px;flex-shrink:0;display:grid;place-items:center;border-radius:10px;background:var(--s-tile);color:var(--s-blue)}
+.s-row b{display:block;font-size:15px;font-weight:800;color:var(--s-ink)}
+.s-row small{display:block;font-size:12.5px;color:var(--s-muted);line-height:1.7;margin-top:2px}
+.s-row .s-chev{margin-inline-start:auto;color:var(--s-blue);flex-shrink:0}
+.s-feature{display:flex;align-items:center;gap:12px;background:var(--s-steel);color:#fff;border-radius:12px;padding:16px;text-decoration:none}
+.s-feature b{font-size:17px;font-weight:800}
+.s-feature small{display:block;font-size:13px;opacity:.92;line-height:1.7;margin-top:3px}
+
+/* ---------- Gentle global harmonisation ---------- */
+h1,h2,h3{letter-spacing:0 !important}
+.footer,.footer p,.footer-brand{color:#9AA2B6 !important}
+.footer-line,.divider{background:var(--s-line) !important}
+/* the nav bar already has the back chevron */
+.s-nav~main .back-link,main>.back-link{display:none !important}
