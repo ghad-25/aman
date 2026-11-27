@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import DATA from '../lib/rules-data.mjs';
-import { checkForPatient, parseQuery, cardLists } from '../lib/engine.mjs';
+import { checkForPatient, parseQuery, cardLists, resolveMedKeys } from '../lib/engine.mjs';
 
 const sara = { conditions: ['MG'], meds: [{ name: 'Mestinon' }, { name: 'Prednisolone' }, { name: 'Imuran' }] };
 const yousef = { conditions: ['G6PD'], meds: [] };
@@ -132,4 +132,8 @@ test('stale record (> 6 months since the doctor confirmed it): "no warning" beco
   const st = checkForPatient(old, { query: 'paracetamol' });
   assert.equal(st.status, 'unknown'); assert.equal(st.stale, true);
   assert.equal(checkForPatient(old, { query: 'ciprofloxacin', route: 'oral' }).level, 'avoid');
+});
+
+test('folic acid is a known medicine (current-meds list shows it as checkable)', () => {
+  for (const n of ['حمض الفوليك (Folic Acid)', 'Folic Acid 5mg', 'فوليك اسيد']) assert.deepEqual(resolveMedKeys(n), ['folic acid'], n);
 });
