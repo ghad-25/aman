@@ -50,6 +50,9 @@ EXTRA_AR = {
     "lisinopril": ["ليسينوبريل", "زيستريل"],
     "atropine": ["أتروبين", "اتروبين"],
     "paracetamol": ["باراسيتامول", "بنادول", "أدول", "ادول", "فيفادول", "تايلينول"],
+    # Known with no warning for MG, G6PD or any allergy family in the library (given in G6PD haemolysis).
+    "folic acid": ["حمض الفوليك", "فوليك اسيد", "فوليك أسيد", "حمض فوليك", "فوليك", "folate", "فولات",
+                   "vitamin b9", "فيتامين ب9"],
     "measles-mumps-rubella vaccine": ["لقاح الحصبة", "لقاح الحصبة والنكاف والحصبة الألمانية", "mmr", "mmr vaccine"],
     "varicella vaccine": ["لقاح الجديري", "لقاح جدري الماء", "varivax"],
     "yellow fever vaccine": ["لقاح الحمى الصفراء", "stamaril"],
